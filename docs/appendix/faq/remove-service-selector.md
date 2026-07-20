@@ -22,9 +22,6 @@ Kubernetes 从 1.19 版本开始，kube-proxy 默认使用 EndpointSlice 作为 
 相关 issue: 
 1. [Should update endpoints when delete service selector](https://github.com/kubernetes/kubernetes/issues/103576)
 2. [EndpointSlice object is not removed when service selector is made to be empty](https://github.com/kubernetes/kubernetes/issues/118376)
-3. [Mirrored EndpointSlices not cleaned up when Service transitions away from nil selector](https://github.com/kubernetes/kubernetes/issues/91072)
-
-除了 `endpointslice-controller` 创建的 EndpointSlice 残留外，还存在 `endpointslicemirroring-controller` 的残留路径：当 Service selector 为 nil 时，`endpointslicemirroring-controller` 会为 Endpoints 创建镜像 EndpointSlice；之后 selector 恢复，mirroring controller 命中 `if svc.Spec.Selector != nil { return nil }` 分支，永久放弃清理该镜像 Slice。两种路径的最终影响相同——kube-proxy 聚合所有 Slice 导致过期 IP 残留。
 
 ## 最佳实践
 
